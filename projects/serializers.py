@@ -8,7 +8,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['id', 'title', 'description', 'type', 'author']
+        fields = ['url', 'id', 'title', 'description', 'type', 'author']
 
     def create(self, validated_data):
         project = Project(**validated_data)
@@ -23,7 +23,7 @@ class IssueSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Issue
-        fields = ['id', 'project', 'title', 'description', 'priority', 'types', 'status', 'author']
+        fields = ['url', 'id', 'project', 'title', 'description', 'priority', 'types', 'status', 'author']
 
     def create(self, validated_data):
         issue = Issue(**validated_data)
