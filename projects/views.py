@@ -1,3 +1,4 @@
+from projects.permissions import IsOwnerOrReadOnly
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.serializers import Serializer
@@ -10,9 +11,9 @@ from projects.models import Project, Issue
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.order_by('-id')
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly, permissions.IsAuthenticated]
 
 class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.order_by('-id')
     serializer_class = IssueSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly, permissions.IsAuthenticated]
