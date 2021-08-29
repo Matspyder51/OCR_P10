@@ -43,7 +43,7 @@ class Issue(models.Model):
     description = models.CharField(max_length=8192)
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
-    created_time = models.DateTimeField(auto_created=True)
+    created_time = models.DateTimeField(auto_created=True, auto_now_add=True)
 
     priority = models.CharField(
         max_length=1,
