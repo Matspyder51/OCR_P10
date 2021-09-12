@@ -32,9 +32,9 @@ class IssueListSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(
         source='author_user_id.username'
     )
-    # assignee_username = serializers.ReadOnlyField(
-    #     source='assignee_user_id.username'
-    # )
+    assignee_username = serializers.ReadOnlyField(
+        source='assignee_user_id.username'
+    )
 
     class Meta:
         model = Issue
@@ -47,7 +47,7 @@ class IssueListSerializer(serializers.ModelSerializer):
             'priority',
             'status',
             'created_time',
-            # 'assignee_username',
+            'assignee_username',
         ]
 
 

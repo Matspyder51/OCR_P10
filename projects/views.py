@@ -1,4 +1,5 @@
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from projects.permissions import IsOwnerOrContributor
 from rest_framework import viewsets, permissions, generics
 from rest_framework.serializers import Serializer
@@ -7,6 +8,9 @@ from projects.serializers import IssueSerializer, ProjectSerializer, IssueCommen
 from projects.models import Project, Issue, IssueComment, Contributor
 
 # Create your views here.
+
+def get_contributors(self):
+    return [user.user.id for user in Contributor.objects.filter(project=self.kwargs['project_id'])]
 
 def serializer_method(self, model):
     if self.request.method == 'GET':
@@ -19,6 +23,10 @@ def queryset_filter(self, obj):
         return self.queryset.filter(project_id=self.kwargs.get(obj))
     if obj == 'issue_id':
         return self.queryset.filter(issue=self.kwargs.get(obj))
+
+def is_user_assignee(self):
+    if int(self.request.data['assignee_user_id']) not in get_contributors(self):
+        raise ValidationError("The user isn't a collaborator of the project")
 
 
 class ProjectList(generics.ListCreateAPIView):
@@ -64,12 +72,29 @@ class IssueList(generics.ListCreateAPIView):
     def get_serializer_class(self):
         return serializer_method(self, 'Issue')
 
+    def perform_create(self, serializer):
+        is_user_assignee(self)
+        project = Project.objects.get(pk=self.kwargs['project_id'])
+        serializer.save(
+            author=self.request.user,
+            project_id=project
+        )
+
 
 class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Issue.objects.all().order_by('-id')
     serializer_class = serializers.IssueSerializer
     permission_classes = [permissions.IsAuthenticated]
-    # http_method_names = ['put', 'delete']
+    http_method_names = ['get', 'put', 'delete']
+
+    def perform_update(self, serializer):
+        is_user_assignee(self)
+        serializer.save()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response("Issue deleted")
 
 class IssueCommentList(generics.ListCreateAPIView):
     queryset = IssueComment.objects.all()

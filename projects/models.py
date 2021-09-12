@@ -64,6 +64,12 @@ class Issue(models.Model):
         default=IssueStatus.TODO
     )
 
+    assignee_user_id = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='assignee_user'
+    )
+
 
 class IssueComment(models.Model):
 
