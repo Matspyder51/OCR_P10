@@ -1,32 +1,67 @@
 from rest_framework import serializers
-from projects.models import Project, Issue
+from projects.models import Project, Issue, IssueComment
 
 
-class ProjectSerializer(serializers.HyperlinkedModelSerializer):
-
-    author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+class ProjectSerializer(serializers.ModelSerializer):
+    author_user_id = serializers.ReadOnlyField(source='author_user_id.id')
 
     class Meta:
         model = Project
-        fields = ['url', 'id', 'title', 'description', 'type', 'author']
+        fields = '__all__'
 
-    def create(self, validated_data):
-        project = Project(**validated_data)
-        project.author = self.context['request'].user
-        project.save()
-        return project
 
-class IssueSerializer(serializers.HyperlinkedModelSerializer):
+class ProjectListSerializer(serializers.ModelSerializer):
+    author_username = serializers.ReadOnlyField(source='author_user_id.username')
 
-    project = serializers.PrimaryKeyRelatedField(queryset=Project.objects.order_by('-id'))
-    author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    class Meta:
+        model = Project
+        fields = ['id', 'title', 'author_user_id', 'author_username']
+
+
+class IssueSerializer(serializers.ModelSerializer):
+    author_user_id = serializers.ReadOnlyField(source='author_user_id.id')
+    project_id = serializers.ReadOnlyField(source='project_id.id')
+
+    class Meta:
+
+        model = Issue
+        fields = '__all__'
+
+
+class IssueListSerializer(serializers.ModelSerializer):
+    author_username = serializers.ReadOnlyField(
+        source='author_user_id.username'
+    )
+    # assignee_username = serializers.ReadOnlyField(
+    #     source='assignee_user_id.username'
+    # )
 
     class Meta:
         model = Issue
-        fields = ['url', 'id', 'project', 'title', 'description', 'priority', 'types', 'status', 'author']
+        fields = [
+            'id',
+            'author_username',
+            'title',
+            'description',
+            'types',
+            'priority',
+            'status',
+            'created_time',
+            # 'assignee_username',
+        ]
 
-    def create(self, validated_data):
-        issue = Issue(**validated_data)
-        issue.author = self.context['request'].user
-        issue.save()
-        return issue
+
+class IssueCommentSerializer(serializers.ModelSerializer):
+    author_user_id = serializers.ReadOnlyField(source='author_user_id.id')
+    issue_id = serializers.ReadOnlyField(source='issue.id')
+
+    class Meta:
+
+        model = IssueComment
+        fields = '__all__'
+
+
+class IssueCommentListSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = IssueComment
+        fields = ['id', 'description']

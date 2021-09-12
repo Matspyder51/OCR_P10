@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Project(models.Model):
     title = models.CharField(max_length=1024)
-    description = models.CharField(max_length=8192)
+    description = models.TextField()
 
     class ProjectTypes(models.TextChoices):
         BACKEND = 0, _('Back-end')
@@ -17,10 +17,11 @@ class Project(models.Model):
     type = models.CharField(
         max_length=1,
         choices=ProjectTypes.choices,
-        default=ProjectTypes.BACKEND
+        # null=True
     )
 
-    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    author_user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
+
 
 class Issue(models.Model):
 
@@ -40,9 +41,9 @@ class Issue(models.Model):
         DONE = 2, _('Terminé')
 
     title = models.CharField(max_length=1024)
-    description = models.CharField(max_length=8192)
+    description = models.TextField()
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
+    project_id = models.ForeignKey(to=Project, on_delete=models.CASCADE)
     created_time = models.DateTimeField(auto_created=True, auto_now_add=True)
 
     priority = models.CharField(
@@ -62,3 +63,18 @@ class Issue(models.Model):
         choices=IssueStatus.choices,
         default=IssueStatus.TODO
     )
+
+
+class IssueComment(models.Model):
+
+    description = models.TextField()
+    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    issue = models.ForeignKey(to=Issue, on_delete=models.CASCADE)
+
+
+class Contributor(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ['user', 'project']
