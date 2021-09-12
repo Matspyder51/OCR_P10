@@ -32,12 +32,25 @@ class ProjectList(generics.ListCreateAPIView):
         contributors_list = [project.project for project in Contributor.objects.filter(user=self.request.user)]
         return contributors_list
 
+    def perform_create(self, serializer):
+        project = serializer.save(author_user_id=self.request.user)
+        contributor = Contributor.objects.create(
+            user=self.request.user,
+            project=project
+        )
+        contributor.save()
+
 
 class ProjectDetails(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ['get', 'put', 'delete']
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response("Project deleted")
 
 
 class IssueList(generics.ListCreateAPIView):
