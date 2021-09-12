@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from projects.permissions import IsOwnerOrContributor
@@ -96,6 +97,7 @@ class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
         self.perform_destroy(instance)
         return Response("Issue deleted")
 
+
 class IssueCommentList(generics.ListCreateAPIView):
     queryset = IssueComment.objects.all()
     serializer_class = serializers.IssueCommentListSerializer
@@ -107,8 +109,21 @@ class IssueCommentList(generics.ListCreateAPIView):
     def get_serializer_class(self):
         return serializer_method(self, 'IssueComment')
 
+    def perform_create(self, serializer):
+        issue = Issue.objects.get(pk=self.kwargs['issue_id'])
+        serializer.save(
+            author=self.request.user,
+            issue=issue
+        )
+
+
 class IssueCommentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = IssueComment.objects.all()
     serializer_class = serializers.IssueCommentSerializer
     permission_classes = [permissions.IsAuthenticated]
-    # http_method_names = ['get', 'put', 'delete']
+    http_method_names = ['get', 'put', 'delete']
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response("IssueComment deleted")
