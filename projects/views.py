@@ -127,3 +127,51 @@ class IssueCommentDetail(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response("IssueComment deleted")
+
+class ContributorList(generics.ListCreateAPIView):
+    serializer_class = serializers.ContributorSerializer
+    queryset = Contributor.objects.all().order_by('id')
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrContributor]
+
+    def get_queryset(self):
+        return queryset_filter(self, 'project_id')
+    
+    def get_serializer_class(self):
+        return serializer_method(self, 'Contributor')
+
+    def perform_create(self, serializer):
+        project_id = Project.objects.get(pk=self.kwargs['project_id'])
+        if int(self.request.data["user"]) in get_contributors(self):
+            raise ValidationError("This user is already contributor of this project")
+        
+        return serializer.save(project=project_id)
+
+class ContributorDelete(generics.DestroyAPIView):
+    serializer_class = serializers.ContributorSerializer
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsOwnerOrContributor
+    ]
+
+    def get_queryset(self):
+        queryset = Contributor.objects.filter(pk=self.kwargs['pk'])
+        return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = Contributor.objects.get(
+                user=User.objects.get(pk=self.kwargs['pk']),
+                project=Project.objects.get(pk=self.kwargs['project_id'])
+            )
+            user = User.objects.get(pk=self.kwargs['pk'])
+            author_project = Project.objects.get(
+                pk=self.kwargs['project_id']
+            ).author_user_id
+            if user == author_project:
+                raise ValidationError("You can't delete the author of the project")
+            self.perform_destroy(instance)
+            return Response("User deleted")
+        except User.DoesNotExist:
+            raise ValidationError("This user doesn't exist")
+        except Contributor.DoesNotExist:
+            raise ValidationError("This user isn't contributor of this project" )

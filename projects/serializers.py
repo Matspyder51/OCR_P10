@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from projects.models import Project, Issue, IssueComment
+from projects.models import Contributor, Project, Issue, IssueComment
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -65,3 +65,18 @@ class IssueCommentListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = IssueComment
         fields = ['id', 'description']
+
+class ContributorSerializer(serializers.ModelSerializer):
+    project_id = serializers.ReadOnlyField(source="project.id")
+
+    class Meta:
+        model = Contributor
+        fields = "__all__"
+
+class ContributorListSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='user.username')
+    user_id = serializers.ReadOnlyField(source="user.id")
+
+    class Meta:
+        model = Contributor
+        fields = ['user_id', 'username']
