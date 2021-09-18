@@ -23,7 +23,6 @@ class IssueSerializer(serializers.ModelSerializer):
     project_id = serializers.ReadOnlyField(source='project_id.id')
 
     class Meta:
-
         model = Issue
         fields = '__all__'
 

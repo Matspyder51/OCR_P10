@@ -33,7 +33,7 @@ class IsOwnerOrContributor(permissions.BasePermission):
 
 class IsObjectOwnerOrContributor(permissions.BasePermission):
 
-    def has_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return is_project_contributor(request)
 

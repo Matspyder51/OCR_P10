@@ -63,7 +63,7 @@ class ProjectDetails(generics.RetrieveUpdateDestroyAPIView):
 
 
 class IssueList(generics.ListCreateAPIView):
-    queryset = Issue.objects.all().order_by('-id')
+    queryset = Issue.objects.all().order_by('id')
     serializer_class = serializers.IssueSerializer
     permission_classes = [permissions.IsAuthenticated, IsContributor]
 
@@ -77,7 +77,7 @@ class IssueList(generics.ListCreateAPIView):
         is_user_assignee(self)
         project = Project.objects.get(pk=self.kwargs['project_id'])
         serializer.save(
-            author=self.request.user,
+            author_user_id=self.request.user,
             project_id=project
         )
 
@@ -112,7 +112,7 @@ class IssueCommentList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         issue = Issue.objects.get(pk=self.kwargs['issue_id'])
         serializer.save(
-            author=self.request.user,
+            author_user_id=self.request.user,
             issue=issue
         )
 

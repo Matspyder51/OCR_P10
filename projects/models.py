@@ -42,30 +42,28 @@ class Issue(models.Model):
 
     title = models.CharField(max_length=1024)
     description = models.TextField()
-    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    author_user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     project_id = models.ForeignKey(to=Project, on_delete=models.CASCADE)
     created_time = models.DateTimeField(auto_created=True, auto_now_add=True)
 
     priority = models.CharField(
         max_length=1,
         choices=IssuePriorities.choices,
-        default=IssuePriorities.LOW
     )
 
     types = models.CharField(
         max_length=1,
         choices=IssueTypes.choices,
-        default=IssueTypes.BUG
     )
 
     status = models.CharField(
         max_length=1,
         choices=IssueStatus.choices,
-        default=IssueStatus.TODO
     )
 
     assignee_user_id = models.ForeignKey(
         User,
+        default=author_user_id,
         on_delete=models.CASCADE,
         related_name='assignee_user'
     )
@@ -74,7 +72,7 @@ class Issue(models.Model):
 class IssueComment(models.Model):
 
     description = models.TextField()
-    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    author_user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     issue = models.ForeignKey(to=Issue, on_delete=models.CASCADE)
 
 
