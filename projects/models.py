@@ -70,7 +70,6 @@ class Issue(models.Model):
 
 
 class IssueComment(models.Model):
-
     description = models.TextField()
     author_user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     issue = models.ForeignKey(to=Issue, on_delete=models.CASCADE)

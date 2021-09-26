@@ -55,7 +55,6 @@ class IssueCommentSerializer(serializers.ModelSerializer):
     issue_id = serializers.ReadOnlyField(source='issue.id')
 
     class Meta:
-
         model = IssueComment
         fields = '__all__'
 

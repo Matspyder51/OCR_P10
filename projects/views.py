@@ -5,7 +5,7 @@ from projects.permissions import IsOwnerOrContributor, IsObjectOwnerOrContributo
 from rest_framework import viewsets, permissions, generics
 from rest_framework.serializers import Serializer
 from projects import serializers
-from projects.serializers import IssueSerializer, ProjectSerializer, IssueCommentListSerializer
+from projects.serializers import IssueSerializer, IssueListSerializer, ProjectSerializer, ProjectListSerializer, IssueCommentSerializer, IssueCommentListSerializer, ContributorSerializer, ContributorListSerializer
 from projects.models import Project, Issue, IssueComment, Contributor
 
 
@@ -26,12 +26,12 @@ def queryset_filter(self, obj):
         return self.queryset.filter(issue=self.kwargs.get(obj))
 
 def is_user_assignee(self):
-    if int(self.request.data['assignee_user_id']) not in get_contributors(self):
+    if self.request.user.id not in get_contributors(self):
         raise ValidationError("The user isn't a collaborator of the project")
 
 
 class ProjectList(generics.ListCreateAPIView):
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_class(self):
@@ -64,7 +64,7 @@ class ProjectDetails(generics.RetrieveUpdateDestroyAPIView):
 
 class IssueList(generics.ListCreateAPIView):
     queryset = Issue.objects.all().order_by('id')
-    serializer_class = serializers.IssueSerializer
+    serializer_class = IssueListSerializer
     permission_classes = [permissions.IsAuthenticated, IsContributor]
 
     def get_queryset(self):
@@ -84,7 +84,7 @@ class IssueList(generics.ListCreateAPIView):
 
 class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Issue.objects.all().order_by('-id')
-    serializer_class = serializers.IssueSerializer
+    serializer_class = IssueSerializer
     permission_classes = [permissions.IsAuthenticated, IsObjectOwnerOrContributor]
     http_method_names = ['get', 'put', 'delete']
 
@@ -99,15 +99,15 @@ class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class IssueCommentList(generics.ListCreateAPIView):
-    queryset = IssueComment.objects.all()
-    serializer_class = serializers.IssueCommentListSerializer
+    queryset = IssueComment.objects.all().order_by('id')
+    serializer_class = IssueCommentListSerializer
     permission_classes = [permissions.IsAuthenticated, IsContributor]
 
     def get_queryset(self):
         return queryset_filter(self, 'issue_id')
 
-    def get_serializer_class(self):
-        return serializer_method(self, 'IssueComment')
+    # def get_serializer_class(self):
+    #     return serializer_method(self, 'IssueComment')
 
     def perform_create(self, serializer):
         issue = Issue.objects.get(pk=self.kwargs['issue_id'])
@@ -119,7 +119,7 @@ class IssueCommentList(generics.ListCreateAPIView):
 
 class IssueCommentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = IssueComment.objects.all()
-    serializer_class = serializers.IssueCommentSerializer
+    serializer_class = IssueCommentSerializer
     permission_classes = [permissions.IsAuthenticated, IsObjectOwnerOrContributor]
     http_method_names = ['get', 'put', 'delete']
 
@@ -129,7 +129,7 @@ class IssueCommentDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response("IssueComment deleted")
 
 class ContributorList(generics.ListCreateAPIView):
-    serializer_class = serializers.ContributorSerializer
+    serializer_class = ContributorListSerializer
     queryset = Contributor.objects.all().order_by('id')
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrContributor]
 
@@ -147,7 +147,7 @@ class ContributorList(generics.ListCreateAPIView):
         return serializer.save(project=project_id)
 
 class ContributorDelete(generics.DestroyAPIView):
-    serializer_class = serializers.ContributorSerializer
+    serializer_class = ContributorSerializer
     permission_classes = [
         permissions.IsAuthenticated,
         IsOwnerOrContributor
