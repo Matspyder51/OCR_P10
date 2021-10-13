@@ -8,7 +8,7 @@ def get_project(request):
         project_id = request.parser_context["kwargs"]["project_id"]
     except KeyError:
         project_id = request.parser_context["kwargs"]["pk"]
-    
+
     try:
         project = Project.objects.get(id=project_id)
     except Project.DoesNotExist:
@@ -18,12 +18,13 @@ def get_project(request):
 
 
 def is_project_contributor(request):
-    contributors = [user.user for user in Contributor.objects.filter(project=get_project(request))]
+    contributors = [
+        user.user for user in Contributor.objects.filter(project=get_project(request))
+    ]
     return request.user in contributors
 
 
 class IsOwnerOrContributor(permissions.BasePermission):
-
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return is_project_contributor(request)
@@ -32,7 +33,6 @@ class IsOwnerOrContributor(permissions.BasePermission):
 
 
 class IsObjectOwnerOrContributor(permissions.BasePermission):
-
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return is_project_contributor(request)
@@ -41,6 +41,5 @@ class IsObjectOwnerOrContributor(permissions.BasePermission):
 
 
 class IsContributor(permissions.BasePermission):
-
     def has_permission(self, request, view):
         return is_project_contributor(request)

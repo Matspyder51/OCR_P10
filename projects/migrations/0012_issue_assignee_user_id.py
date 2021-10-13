@@ -9,14 +9,19 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('projects', '0011_rename_project_issue_project_id'),
+        ("projects", "0011_rename_project_issue_project_id"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='issue',
-            name='assignee_user_id',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='assignee_user', to='auth.user'),
+            model_name="issue",
+            name="assignee_user_id",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="assignee_user",
+                to="auth.user",
+            ),
             preserve_default=False,
         ),
     ]

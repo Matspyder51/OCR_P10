@@ -7,28 +7,30 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0007_alter_issuecomment_issue'),
+        ("projects", "0007_alter_issuecomment_issue"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='issue',
-            name='description',
+            model_name="issue",
+            name="description",
             field=models.TextField(),
         ),
         migrations.AlterField(
-            model_name='issuecomment',
-            name='description',
+            model_name="issuecomment",
+            name="description",
             field=models.TextField(),
         ),
         migrations.AlterField(
-            model_name='issuecomment',
-            name='issue',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='projects.issue'),
+            model_name="issuecomment",
+            name="issue",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="projects.issue"
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='description',
+            model_name="project",
+            name="description",
             field=models.TextField(),
         ),
     ]

@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0003_alter_issue_created_time'),
+        ("projects", "0003_alter_issue_created_time"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='type',
-            field=models.CharField(choices=[('0', 'Back-end'), ('1', 'Front-end'), ('2', 'iOS'), ('3', 'Android')], default='0', max_length=1, null=True),
+            model_name="project",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("0", "Back-end"),
+                    ("1", "Front-end"),
+                    ("2", "iOS"),
+                    ("3", "Android"),
+                ],
+                default="0",
+                max_length=1,
+                null=True,
+            ),
         ),
     ]

@@ -9,38 +9,54 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('projects', '0012_issue_assignee_user_id'),
+        ("projects", "0012_issue_assignee_user_id"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='issue',
-            old_name='author',
-            new_name='author_user_id',
+            model_name="issue",
+            old_name="author",
+            new_name="author_user_id",
         ),
         migrations.RenameField(
-            model_name='issuecomment',
-            old_name='author',
-            new_name='author_user_id',
+            model_name="issuecomment",
+            old_name="author",
+            new_name="author_user_id",
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='assignee_user_id',
-            field=models.ForeignKey(default=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL), on_delete=django.db.models.deletion.CASCADE, related_name='assignee_user', to=settings.AUTH_USER_MODEL),
+            model_name="issue",
+            name="assignee_user_id",
+            field=models.ForeignKey(
+                default=models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL,
+                ),
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="assignee_user",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='priority',
-            field=models.CharField(choices=[('0', 'Faible'), ('1', 'Moyen'), ('2', 'Élevé')], max_length=1),
+            model_name="issue",
+            name="priority",
+            field=models.CharField(
+                choices=[("0", "Faible"), ("1", "Moyen"), ("2", "Élevé")], max_length=1
+            ),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='status',
-            field=models.CharField(choices=[('0', 'A faire'), ('1', 'En cours'), ('2', 'Terminé')], max_length=1),
+            model_name="issue",
+            name="status",
+            field=models.CharField(
+                choices=[("0", "A faire"), ("1", "En cours"), ("2", "Terminé")],
+                max_length=1,
+            ),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='types',
-            field=models.CharField(choices=[('0', 'Bug'), ('1', 'Amélioration'), ('2', 'Tâche')], max_length=1),
+            model_name="issue",
+            name="types",
+            field=models.CharField(
+                choices=[("0", "Bug"), ("1", "Amélioration"), ("2", "Tâche")],
+                max_length=1,
+            ),
         ),
     ]

@@ -7,18 +7,37 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Project',
+            name="Project",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=1024)),
-                ('description', models.CharField(max_length=8192)),
-                ('type', models.CharField(choices=[('0', 'Back-end'), ('1', 'Front-end'), ('2', 'iOS'), ('3', 'Android')], default='0', max_length=1)),
-                ('author', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=1024)),
+                ("description", models.CharField(max_length=8192)),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[
+                            ("0", "Back-end"),
+                            ("1", "Front-end"),
+                            ("2", "iOS"),
+                            ("3", "Android"),
+                        ],
+                        default="0",
+                        max_length=1,
+                    ),
+                ),
+                ("author", models.IntegerField()),
             ],
         ),
     ]

@@ -1,0 +1,6 @@
+[flake8]
+ignore = D203, W503
+exclude = .git,__pycache__,migrations,env
+max-complexity = 10
+per-file-ignores =
+	./softdeck/settings.py: E501

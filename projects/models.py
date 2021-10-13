@@ -9,10 +9,10 @@ class Project(models.Model):
     description = models.TextField()
 
     class ProjectTypes(models.TextChoices):
-        BACKEND = 0, _('Back-end')
-        FRONTEND = 1, _('Front-end')
-        IOS = 2, _('iOS')
-        ANDROID = 3, _('Android')
+        BACKEND = 0, _("Back-end")
+        FRONTEND = 1, _("Front-end")
+        IOS = 2, _("iOS")
+        ANDROID = 3, _("Android")
 
     type = models.CharField(
         max_length=1,
@@ -24,21 +24,20 @@ class Project(models.Model):
 
 
 class Issue(models.Model):
-
     class IssuePriorities(models.TextChoices):
-        LOW = 0, _('Faible')
-        MEDIUM = 1, _('Moyen')
-        IMPORTANT = 2, _('Élevé')
+        LOW = 0, _("Faible")
+        MEDIUM = 1, _("Moyen")
+        IMPORTANT = 2, _("Élevé")
 
     class IssueTypes(models.TextChoices):
-        BUG = 0, _('Bug')
-        FEATURE = 1, _('Amélioration')
-        TASK = 2, _('Tâche')
+        BUG = 0, _("Bug")
+        FEATURE = 1, _("Amélioration")
+        TASK = 2, _("Tâche")
 
     class IssueStatus(models.TextChoices):
-        TODO = 0, _('A faire')
-        WIP = 1, _('En cours')
-        DONE = 2, _('Terminé')
+        TODO = 0, _("A faire")
+        WIP = 1, _("En cours")
+        DONE = 2, _("Terminé")
 
     title = models.CharField(max_length=1024)
     description = models.TextField()
@@ -65,7 +64,7 @@ class Issue(models.Model):
         User,
         default=author_user_id,
         on_delete=models.CASCADE,
-        related_name='assignee_user'
+        related_name="assignee_user",
     )
 
 
@@ -80,4 +79,4 @@ class Contributor(models.Model):
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ['user', 'project']
+        unique_together = ["user", "project"]
